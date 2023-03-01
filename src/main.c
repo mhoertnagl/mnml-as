@@ -17,11 +17,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "utils/types.h"
 #include "utils/errio.h"
 #include "as/as.h"
 
-#define MAX_LINE_LEN 255
+#define MAX_LINE_LEN 256
+#define MAX_TEXT_LEN 256
 
 // clang-format off
 static const char keywords[][4] = {
@@ -44,10 +46,83 @@ i8 get_opcode(cstr mn)
   return -1;
 }
 
+typedef struct
+{
+  // clang-format off
+  char text[MAX_TEXT_LEN];
+  // clang-format on
+} Token;
+
+i8 chr;
+u32 line = 1;
+u32 col = 0;
+char text[MAX_TEXT_LEN];
+
+void next_chr(FILE *input)
+{
+  chr = getc(input);
+  col++;
+}
+
+void skip_space(FILE *input)
+{
+  while (chr != EOF && isspace(chr))
+  {
+    if (chr == '\n')
+    {
+      line++;
+      col = 0;
+    }
+
+    next_chr(input);
+  }
+}
+
+void read_text(FILE *input)
+{
+  u32 p = 0;
+  while (chr != EOF && !isspace(chr))
+  {
+    text[p++] = chr;
+    next_chr(input);
+  }
+  text[p] = '\0';
+}
+
+i8 next_token(FILE *input)
+{
+  next_chr(input);
+
+  if (chr == EOF)
+  {
+    return EOF;
+  }
+
+  if (isspace(chr))
+  {
+    skip_space(input);
+  }
+
+  if (chr == '@')
+  {
+    read_text(input);
+    printf("%lu:%lu Found label: [%s]\n", line, col, text);
+  }
+  else if (isdigit(chr))
+  {
+    read_text(input);
+    printf("%lu:%lu Found number: [%s]\n", line, col, text);
+  }
+  else
+  {
+    read_text(input);
+    printf("%lu:%lu Found keyword: [%s]\n", line, col, text);
+  }
+  return 0;
+}
+
 int main(int argc, char **argv)
 {
-  printf("Keyword table size: %d", sizeof(keywords));
-
   if (argc < 3)
   {
     printf("Usage: %s input.as output.vm\n", argv[0]);
@@ -56,10 +131,6 @@ int main(int argc, char **argv)
 
   FILE *src_fp;
   FILE *bin_fp;
-
-  i32 read;
-  u32 len = 0;
-  char line[MAX_LINE_LEN];
 
   src_fp = fopen(argv[1], "r");
 
@@ -77,10 +148,9 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  while (fgets(line, MAX_LINE_LEN, src_fp) != NULL)
+  while (next_token(src_fp) != EOF)
   {
-    fwrite(line, 10, 1, bin_fp);
-    printf(line);
+    /* code */
   }
 
   fclose(src_fp);
