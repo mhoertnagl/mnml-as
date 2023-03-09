@@ -14,45 +14,34 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#ifndef LEX_H
+#define LEX_H
+
 #include <stdio.h>
-#include <stdlib.h>
-// #include <string.h>
-// #include <ctype.h>
-// #include "utils/types.h"
-#include "utils/errio.h"
-// #include "as/as.h"
-#include "lex/lex.h"
+#include "utils/types.h"
 
-int main(int argc, char **argv)
+#define MAX_TEXT_LEN 256
+
+typedef struct
 {
-  if (argc < 3)
-  {
-    printf("Usage: %s input.as output.vm\n", argv[0]);
-    return EXIT_FAILURE;
-  }
+  // clang-format off
+  u32  line;
+  u32  col;
+  char text[MAX_TEXT_LEN];
+  // clang-format on
+} Token;
 
-  FILE *src_fp;
-  FILE *bin_fp;
+typedef struct
+{
+  // clang-format off
+  FILE  *input;
+  i8    chr;
+  Token token;
+  // clang-format on
+} Lexer;
 
-  src_fp = fopen(argv[1], "r");
+Lexer *new_lexer(FILE *input);
 
-  if (src_fp == NULL)
-  {
-    perrorf("ERROR: Source file [%s] not found.\n", argv[1]);
-    return EXIT_FAILURE;
-  }
+i8 next_token(Lexer *lexer);
 
-  bin_fp = fopen(argv[2], "wb");
-
-  if (bin_fp == NULL)
-  {
-    perrorf("ERROR: Binary file [%s] not found.\n", argv[2]);
-    return EXIT_FAILURE;
-  }
-
-  Lexer *lexer = new_lexer(src_fp);
-
-  fclose(src_fp);
-
-  return EXIT_SUCCESS;
-}
+#endif
