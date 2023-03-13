@@ -22,9 +22,14 @@
 
 #define MAX_TEXT_LEN 256
 
+#define TOK_OP 0
+#define TOK_NUM 1
+#define TOK_LABEL 2
+
 typedef struct
 {
   // clang-format off
+  u8   type;
   u32  line;
   u32  col;
   char text[MAX_TEXT_LEN];
@@ -41,6 +46,8 @@ typedef struct
 } Lexer;
 
 Lexer *new_lexer(FILE *input);
+
+void free_lexer(Lexer *lexer);
 
 i8 next_token(Lexer *lexer);
 

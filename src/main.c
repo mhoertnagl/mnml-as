@@ -52,6 +52,9 @@ int main(int argc, char **argv)
 
   Lexer *lexer = new_lexer(src_fp);
 
+  next_token(lexer);
+
+  fclose(bin_fp);
   fclose(src_fp);
 
   return EXIT_SUCCESS;

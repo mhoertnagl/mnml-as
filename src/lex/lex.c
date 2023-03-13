@@ -35,25 +35,9 @@ Lexer *new_lexer(FILE *input)
   return lexer;
 }
 
-// clang-format off
-static const char keywords[][4] = {
-  "psh", "pop", "nip", "swp", "ovr", "dup", "rot", "inc",
-  "dec", "add", "sub", "mul", "div", "not", "and", "oor",
-  "xor", "sll", "srl", "equ", "neq", "slt", "sgt", "sle",
-  "sge", "jmp", "jal", "bra", "ldw", "stw", "drx", "dtx"
-};
-// clang-format on
-
-i8 get_opcode(cstr mn)
+void free_lexer(Lexer *lexer)
 {
-  for (u32 i = 0; i < sizeof(keywords); i += 4)
-  {
-    if (strncmp(mn, keywords[i], 4) == 0)
-    {
-      return i / 4;
-    }
-  }
-  return -1;
+  free(lexer);
 }
 
 void next_chr(Lexer *lexer)
@@ -102,6 +86,7 @@ i8 next_token(Lexer *lexer)
 
   if (lexer->chr == '@')
   {
+    lexer->token.type = TOK_LABEL;
     read_text(lexer);
     printf(
         "%lu:%lu Found label: [%s]\n",
@@ -111,6 +96,7 @@ i8 next_token(Lexer *lexer)
   }
   else if (isdigit(lexer->chr))
   {
+    lexer->token.type = TOK_NUM;
     read_text(lexer);
     printf(
         "%lu:%lu Found number: [%s]\n",
@@ -120,6 +106,7 @@ i8 next_token(Lexer *lexer)
   }
   else
   {
+    lexer->token.type = TOK_OP;
     read_text(lexer);
     printf(
         "%lu:%lu Found keyword: [%s]\n",
