@@ -42,6 +42,16 @@ i8 get_opcode(cstr mn)
   return -1;
 }
 
+void write_u8(Assembler *assembler, u8 val)
+{
+  fwrite(&val, 1, 1, assembler->output);
+}
+
+void write_i16(Assembler *assembler, i16 val)
+{
+  fwrite(&val, 2, 1, assembler->output);
+}
+
 Assembler *new_assembler(FILE *input, FILE *output)
 {
   Assembler *assembler = (Assembler *)malloc(sizeof(Assembler));
@@ -59,16 +69,6 @@ void free_assembler(Assembler *assembler)
   free(assembler);
 }
 
-void write_u8(Assembler *assembler, u8 val)
-{
-  fwrite(&val, 1, 1, assembler->output);
-}
-
-void write_i16(Assembler *assembler, i16 val)
-{
-  fwrite(&val, 2, 1, assembler->output);
-}
-
 void resolve_labels(Assembler *assembler)
 {
   u32 ip = 0;
@@ -81,6 +81,8 @@ void resolve_labels(Assembler *assembler)
     switch (token.type)
     {
     case TOK_OP:
+      // // if token is (JMP, JAL, BRA)
+      // //   skip next token
       ip++;
       break;
     case TOK_NUM:
@@ -89,6 +91,7 @@ void resolve_labels(Assembler *assembler)
     case TOK_LABEL:
       // Add the label without the leading @ character.
       add_symbol(table, token.text + 1, ip);
+      // ERROR: symbol already defined
       break;
     case TOK_REF:
       ip += 2;
@@ -110,20 +113,27 @@ void encode(Assembler *assembler)
     {
     case TOK_OP:
       u8 op = get_opcode(token.text);
+      // ERROR: illegal operation
       write_u8(assembler, op);
+      // // if op is (JMP, JAL, BRA)
+      // //   encode label
+      // // if op is PSH
+      // //   if next token is NUM
+      // //     encode number
+      // //   if next token is LABEL
+      // //     encode label
       ip++;
       break;
     case TOK_NUM:
       // text -> hex or dec
+      // https://pubs.opengroup.org/onlinepubs/7908799/xsh/strtol.html
+      // ERROR: number conversion error
       // write i16
       ip += 2;
       break;
-    case TOK_LABEL:
-      // Labels are already resolved. We can safely
-      // ignore these tokens in the encoding stage.
-      break;
     case TOK_REF:
       i32 loc = find_symbol(assembler->table, token.text + 1);
+      // ERROR: undefined reference
       write_i16(assembler, loc - ip);
       ip += 2;
       break;
