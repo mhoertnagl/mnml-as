@@ -19,6 +19,7 @@
 
 #include "utils/types.h"
 #include "lex/lex.h"
+#include "sym/sym.h"
 
 #define SRC_EXT "as"
 #define BIN_EXT "vm"
@@ -26,14 +27,17 @@
 typedef struct
 {
   // clang-format off
-  Lexer *lexer;
-  FILE  *output;
-  u32   ip;
+  Lexer       *lexer;
+  SymbolTable *table;
+  FILE        *output;
+  u32         ip;
   // clang-format on
 } Assembler;
 
 Assembler *new_assembler(FILE *input, FILE *output);
 
 void free_assembler(Assembler *assembler);
+
+void assembler_run(Assembler *assembler);
 
 #endif

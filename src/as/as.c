@@ -46,6 +46,7 @@ Assembler *new_assembler(FILE *input, FILE *output)
 {
   Assembler *assembler = (Assembler *)malloc(sizeof(Assembler));
   assembler->lexer = new_lexer(input);
+  assembler->table = new_symbol_table();
   assembler->output = output;
   assembler->ip = 0;
   return assembler;
@@ -54,18 +55,84 @@ Assembler *new_assembler(FILE *input, FILE *output)
 void free_assembler(Assembler *assembler)
 {
   free_lexer(assembler->lexer);
+  free_symbol_table(assembler->table);
   free(assembler);
 }
 
-u8 assembler_run(Assembler *assembler)
+void write_u8(Assembler *assembler, u8 val)
 {
-  // While there are tokens left.
-  // If token is a label
-  //   add token and current ip to symbol table
-  // If token is a number
-  //   convert text to 16bit number and save it to output
-  //   ip += 2
-  // If token is an operation code
-  //   convert text to opcode and save it to output
-  //   ip += 1
+  fwrite(&val, 1, 1, assembler->output);
+}
+
+void write_i16(Assembler *assembler, i16 val)
+{
+  fwrite(&val, 2, 1, assembler->output);
+}
+
+void resolve_labels(Assembler *assembler)
+{
+  u32 ip = 0;
+  Lexer *lexer = assembler->lexer;
+  SymbolTable *table = assembler->table;
+
+  while (next_token(lexer) != EOF)
+  {
+    Token token = lexer->token;
+    switch (token.type)
+    {
+    case TOK_OP:
+      ip++;
+      break;
+    case TOK_NUM:
+      ip += 2;
+      break;
+    case TOK_LABEL:
+      // Add the label without the leading @ character.
+      add_symbol(table, token.text + 1, ip);
+      break;
+    case TOK_REF:
+      ip += 2;
+      break;
+    }
+  }
+}
+
+void encode(Assembler *assembler)
+{
+  u32 ip = 0;
+  Lexer *lexer = assembler->lexer;
+  SymbolTable *table = assembler->table;
+
+  while (next_token(lexer) != EOF)
+  {
+    Token token = lexer->token;
+    switch (token.type)
+    {
+    case TOK_OP:
+      u8 op = get_opcode(token.text);
+      write_u8(assembler, op);
+      ip++;
+      break;
+    case TOK_NUM:
+      // text -> hex or dec
+      // write i16
+      ip += 2;
+      break;
+    case TOK_LABEL:
+      // Labels are already resolved. We can safely
+      // ignore these tokens in the encoding stage.
+      break;
+    case TOK_REF:
+      i32 loc = find_symbol(assembler->table, token.text + 1);
+      write_i16(assembler, loc - ip);
+      ip += 2;
+      break;
+    }
+  }
+}
+
+void assembler_run(Assembler *assembler)
+{
+  resolve_labels(assembler);
+  encode(assembler);
 }

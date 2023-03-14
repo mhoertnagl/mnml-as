@@ -14,42 +14,35 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef LEX_H
-#define LEX_H
+#ifndef SYM_H
+#define SYM_H
 
-#include <stdio.h>
 #include "utils/types.h"
 
-#define MAX_TEXT_LEN 256
-
-#define TOK_OP 0
-#define TOK_NUM 1
-#define TOK_LABEL 2
-#define TOK_REF 3
+#define TABLE_SIZE (1 << 16)
 
 typedef struct
 {
   // clang-format off
-  u8   type;
-  u32  line;
-  u32  col;
-  char text[MAX_TEXT_LEN];
+  str name;
+  i32 loc;
   // clang-format on
-} Token;
+} Symbol;
 
 typedef struct
 {
   // clang-format off
-  FILE  *input;
-  i8    chr;
-  Token token;
+  u32    size;
+  Symbol symbols[TABLE_SIZE];
   // clang-format on
-} Lexer;
+} SymbolTable;
 
-Lexer *new_lexer(FILE *input);
+SymbolTable *new_symbol_table();
 
-void free_lexer(Lexer *lexer);
+void free_symbol_table(SymbolTable *table);
 
-i8 next_token(Lexer *lexer);
+void add_symbol(SymbolTable *table, str name, i32 loc);
+
+i32 find_symbol(SymbolTable *table, str name);
 
 #endif

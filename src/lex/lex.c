@@ -76,6 +76,9 @@ i8 next_token(Lexer *lexer)
 
   if (lexer->chr == EOF)
   {
+    // Rewind to enable repeated
+    // scanning of the input file.
+    rewind(lexer->input);
     return EOF;
   }
 
@@ -90,6 +93,16 @@ i8 next_token(Lexer *lexer)
     read_text(lexer);
     printf(
         "%lu:%lu Found label: [%s]\n",
+        lexer->token.line,
+        lexer->token.col,
+        lexer->token.text);
+  }
+  else if (lexer->chr == '&')
+  {
+    lexer->token.type = TOK_REF;
+    read_text(lexer);
+    printf(
+        "%lu:%lu Found reference: [%s]\n",
         lexer->token.line,
         lexer->token.col,
         lexer->token.text);
