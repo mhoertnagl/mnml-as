@@ -52,6 +52,11 @@ void write_i16(Assembler *assembler, i16 val)
   fwrite(&val, 2, 1, assembler->output);
 }
 
+void write_u16(Assembler *assembler, u16 val)
+{
+  fwrite(&val, 2, 1, assembler->output);
+}
+
 Assembler *new_assembler(FILE *input, FILE *output)
 {
   Assembler *assembler = (Assembler *)malloc(sizeof(Assembler));
@@ -81,11 +86,12 @@ void resolve_labels(Assembler *assembler)
     switch (token.type)
     {
     case TOK_OP:
-      // // if token is (JMP, JAL, BRA)
-      // //   skip next token
       ip++;
       break;
     case TOK_NUM:
+      ip += 2;
+      break;
+    case TOK_REF:
       ip += 2;
       break;
     case TOK_LABEL:
@@ -93,16 +99,13 @@ void resolve_labels(Assembler *assembler)
       add_symbol(table, token.text + 1, ip);
       // ERROR: symbol already defined
       break;
-    case TOK_REF:
-      ip += 2;
-      break;
     }
   }
 }
 
 void encode(Assembler *assembler)
 {
-  u32 ip = 0;
+  // u32 ip = 0;
   Lexer *lexer = assembler->lexer;
   SymbolTable *table = assembler->table;
 
@@ -115,27 +118,19 @@ void encode(Assembler *assembler)
       u8 op = get_opcode(token.text);
       // ERROR: illegal operation
       write_u8(assembler, op);
-      // // if op is (JMP, JAL, BRA)
-      // //   encode label
-      // // if op is PSH
-      // //   if next token is NUM
-      // //     encode number
-      // //   if next token is LABEL
-      // //     encode label
-      ip++;
+      // ip++;
       break;
     case TOK_NUM:
-      // text -> hex or dec
-      // https://pubs.opengroup.org/onlinepubs/7908799/xsh/strtol.html
+      i16 num = strtol(token.text, NULL, 0);
       // ERROR: number conversion error
-      // write i16
-      ip += 2;
+      write_i16(assembler, num);
+      // ip += 2;
       break;
     case TOK_REF:
       i32 loc = find_symbol(assembler->table, token.text + 1);
       // ERROR: undefined reference
-      write_i16(assembler, loc - ip);
-      ip += 2;
+      write_u16(assembler, loc);
+      // ip += 2;
       break;
     }
   }

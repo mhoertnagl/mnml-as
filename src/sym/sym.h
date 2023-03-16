@@ -25,7 +25,7 @@ typedef struct
 {
   // clang-format off
   str name;
-  i32 loc;
+  u16 loc;
   // clang-format on
 } Symbol;
 
@@ -41,7 +41,7 @@ SymbolTable *new_symbol_table();
 
 void free_symbol_table(SymbolTable *table);
 
-void add_symbol(SymbolTable *table, str name, i32 loc);
+void add_symbol(SymbolTable *table, str name, u16 loc);
 
 i32 find_symbol(SymbolTable *table, str name);
 

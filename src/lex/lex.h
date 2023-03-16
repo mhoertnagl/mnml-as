@@ -24,8 +24,8 @@
 
 #define TOK_OP 0
 #define TOK_NUM 1
-#define TOK_LABEL 2
-#define TOK_REF 3
+#define TOK_REF 2
+#define TOK_LABEL 3
 
 typedef struct
 {

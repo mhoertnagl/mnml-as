@@ -50,11 +50,11 @@
 #define VM_SLE 0x17 // (a b -- (b <= a))
 #define VM_SGE 0x18 // (a b -- (b >= a))
 
-#define VM_JMP 0x19 // (a -- ) pc += a
+#define VM_JMP 0x19 // (a -- ) pc = a
 // TODO: drop a
-#define VM_JAL 0x1a // (a -- (pc+1)) pc += a
+#define VM_JAL 0x1a // (a -- (pc+1)) pc = a
 // TODO: b a vs. a b
-#define VM_BRA 0x1b // (b a -- ) if b then pc += a
+#define VM_BRA 0x1b // (b a -- ) if b then pc = a
 
 #define VM_LDW 0x1c // (a r -- dev[a]->mem[r])
 #define VM_STW 0x1d // (a r b -- ) dev[a]->mem[r] = b

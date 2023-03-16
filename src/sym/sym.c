@@ -31,7 +31,7 @@ void free_symbol_table(SymbolTable *table)
   free(table);
 }
 
-void add_symbol(SymbolTable *table, str name, i32 loc)
+void add_symbol(SymbolTable *table, str name, u16 loc)
 {
   Symbol symbol = table->symbols[table->size];
   symbol.name = name;
@@ -39,7 +39,7 @@ void add_symbol(SymbolTable *table, str name, i32 loc)
   table->size++;
 }
 
-i32 find_symbol(SymbolTable *table, str name)
+u16 find_symbol(SymbolTable *table, str name)
 {
   for (i32 i = 0; i < table->size; i++)
   {

@@ -3,7 +3,7 @@
   psh 0x4321
   add
   psh &label
-  jmp &label
+  jmp
 @data
   0x0123
   0x1234
