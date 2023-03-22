@@ -115,23 +115,29 @@ void encode(Assembler *assembler)
     switch (token.type)
     {
     case TOK_OP:
+    {
       u8 op = get_opcode(token.text);
       // ERROR: illegal operation
       write_u8(assembler, op);
       // ip++;
       break;
+    }
     case TOK_NUM:
+    {
       i16 num = strtol(token.text, NULL, 0);
       // ERROR: number conversion error
       write_i16(assembler, num);
       // ip += 2;
       break;
+    }
     case TOK_REF:
+    {
       i32 loc = find_symbol(assembler->table, token.text + 1);
       // ERROR: undefined reference
       write_u16(assembler, loc);
       // ip += 2;
       break;
+    }
     }
   }
 }

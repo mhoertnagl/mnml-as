@@ -39,7 +39,7 @@ void add_symbol(SymbolTable *table, str name, u16 loc)
   table->size++;
 }
 
-u16 find_symbol(SymbolTable *table, str name)
+i32 find_symbol(SymbolTable *table, str name)
 {
   for (i32 i = 0; i < table->size; i++)
   {

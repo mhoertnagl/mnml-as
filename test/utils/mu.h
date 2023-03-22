@@ -1,4 +1,4 @@
-// µ.h - Minimalistic unit testing framework.
+// mu.h - Minimalist unit testing framework.
 // Copyright (C) 2023  Mathias Hörtnagl <mathias.hoertnagl[ÄT]gmail.com>
 //
 // This program is free software: you can redistribute it and/or modify
@@ -19,13 +19,13 @@
 
 #include <stdio.h>
 
+// clang-format off
+
 typedef struct
 {
   int tests_run;
   int tests_failed;
 } Mu;
-
-// clang-format off
 
 /**
  * Defines a standalone unit test program.
@@ -33,29 +33,33 @@ typedef struct
  * @param body The body block containing 
  *             the unit tests. 
  */
-#define mu_unit(body)                    \
-int main()                               \
-{                                        \
-  Mu __mu__ = {                          \
-    .tests_run    = 0,                   \
-    .tests_failed = 0                    \
-  };                                     \
-  printf("Running file %s\n", __FILE__); \
-  body                                   \
-  printf("────────────────────────\n");  \
-  if (__mu__.tests_failed == 0) {        \
-    printf(                              \
-      "PASSED %d TESTS\n",               \
-      __mu__.tests_run                   \
-    );                                   \
-  } else {                               \
-    printf(                              \
-      "FAILED %d of %d TESTS\n",         \
-      __mu__.tests_failed,               \
-      __mu__.tests_run                   \
-    );                                   \
-  }                                      \
-  return 0;                              \
+#define mu_unit(body)                                                        \
+int main()                                                                   \
+{                                                                            \
+  Mu __mu__ = {                                                              \
+    .tests_run    = 0,                                                       \
+    .tests_failed = 0                                                        \
+  };                                                                         \
+  printf("\n═══════════════════════════════════════════════════════════\n"); \
+  printf(" µ Unit v1.0\n");                                                  \
+  printf("───────────────────────────────────────────────────────────\n");   \
+  printf(" Running file %s\n\n", __FILE__);                                  \
+  body                                                                       \
+  printf("\n───────────────────────────────────────────────────────────\n"); \
+  if (__mu__.tests_failed == 0) {                                            \
+    printf(                                                                  \
+      " PASSED %d TESTS\n",                                                  \
+      __mu__.tests_run                                                       \
+    );                                                                       \
+  } else {                                                                   \
+    printf(                                                                  \
+      " FAILED %d of %d TESTS\n",                                            \
+      __mu__.tests_failed,                                                   \
+      __mu__.tests_run                                                       \
+    );                                                                       \
+  }                                                                          \
+  printf("═══════════════════════════════════════════════════════════\n\n"); \
+  return 0;                                                                  \
 }
 
 /**
@@ -64,24 +68,25 @@ int main()                               \
  * @param name The name of the unit test.
  * @param body The test function body block. 
  */
-#define test(name, body)    \
-    printf("▶ %s\n", name); \
-    body                    \
+#define test(name, body)   \
+    printf(" ▶ %s", name); \
+    body                   \
     __mu__.tests_run++;                 
 
 /**
- * Asserts that the test condition is true or 
- * prints the failing message if the condition 
- * is not satisfied.
+ * Asserts that the test condition is true or prints the 
+ * failing message if the condition is not satisfied.
  * 
  * @param test     The test condition.
  * @param __format The failing message template.
  * @param args     Optional template arguments.
  */
-#define assert(test, __format, args...)               \
-  if (!(test)) {                                      \
-    printf("  ▸ %d: "__format"\n", __LINE__, ##args); \
-    __mu__.tests_failed++;                            \
+#define assert(test, __format, args...)                         \
+  if (!(test)) {                                                \
+    printf(" … FAIL\n   ▸ %d: "__format"\n", __LINE__, ##args); \
+    __mu__.tests_failed++;                                      \
+  } else {                                                      \
+    printf(" … OK\n");                                          \
   }
 
 // clang-format on
