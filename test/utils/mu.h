@@ -99,8 +99,21 @@ int main()                                                                   \
     fails++;                                            \
   }
 
-#define assert_str_equal(act, exp) \
-  assert(!strcmp(exp, act), "Expected string [%s] but got [%s]", exp, act)
+/**
+ * Asserts that the actual string is equal 
+ * to the expected string or prints a fixed
+ * message indicating the mismatch.
+ * 
+ * @param act The actual string.
+ * @param exp The expected string.
+ */
+#define assert_str_equal(act, exp)       \
+  assert(                                \
+    !strcmp(exp, act),                   \
+    "Expected string [%s] but got [%s]", \
+    exp,                                 \
+    act                                  \
+  )
 
 // clang-format on
 
