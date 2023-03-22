@@ -59,7 +59,7 @@ void write_u16(Assembler *assembler, u16 val)
 
 Assembler *new_assembler(FILE *input, FILE *output)
 {
-  Assembler *assembler = (Assembler *)malloc(sizeof(Assembler));
+  Assembler *assembler = malloc(sizeof(Assembler));
   assembler->lexer = new_lexer(input);
   assembler->table = new_symbol_table();
   assembler->output = output;

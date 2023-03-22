@@ -33,7 +33,7 @@ typedef struct
 {
   // clang-format off
   u32    size;
-  Symbol symbols[TABLE_SIZE];
+  Symbol *symbols[TABLE_SIZE];
   // clang-format on
 } SymbolTable;
 

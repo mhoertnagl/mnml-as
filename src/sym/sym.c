@@ -21,21 +21,27 @@
 
 SymbolTable *new_symbol_table()
 {
-  SymbolTable *table = (SymbolTable *)malloc(sizeof(SymbolTable));
+  SymbolTable *table = malloc(sizeof(SymbolTable));
+  // table->symbols = malloc(TABLE_SIZE * sizeof(Symbol));
   table->size = 0;
   return table;
 }
 
 void free_symbol_table(SymbolTable *table)
 {
+  for (i32 i = 0; i < table->size; i++)
+  {
+    free(table->symbols[i]);
+  }
   free(table);
 }
 
 void add_symbol(SymbolTable *table, str name, u16 loc)
 {
-  Symbol symbol = table->symbols[table->size];
-  symbol.name = name;
-  symbol.loc = loc;
+  Symbol *symbol = malloc(sizeof(Symbol));
+  symbol->name = name;
+  symbol->loc = loc;
+  table->symbols[table->size] = symbol;
   table->size++;
 }
 
@@ -43,10 +49,10 @@ i32 find_symbol(SymbolTable *table, str name)
 {
   for (i32 i = 0; i < table->size; i++)
   {
-    Symbol symbol = table->symbols[i];
-    if (strcmp(name, symbol.name) == 0)
+    Symbol *symbol = table->symbols[i];
+    if (strcmp(name, symbol->name) == 0)
     {
-      return symbol.loc;
+      return symbol->loc;
     }
   }
   return -1;

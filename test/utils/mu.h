@@ -18,6 +18,7 @@
 #define MU_H
 
 #include <stdio.h>
+#include <string.h>
 
 // clang-format off
 
@@ -41,11 +42,11 @@ int main()                                                                   \
     .tests_failed = 0                                                        \
   };                                                                         \
   printf("\n═══════════════════════════════════════════════════════════\n"); \
-  printf(" µ Unit v1.0\n");                                                  \
+  printf(" µ Unit v1.2\n");                                                  \
   printf("───────────────────────────────────────────────────────────\n");   \
   printf(" Running file %s\n\n", __FILE__);                                  \
   body                                                                       \
-  printf("\n───────────────────────────────────────────────────────────\n"); \
+  printf("───────────────────────────────────────────────────────────\n");   \
   if (__mu__.tests_failed == 0) {                                            \
     printf(                                                                  \
       " PASSED %d TESTS\n",                                                  \
@@ -68,10 +69,18 @@ int main()                                                                   \
  * @param name The name of the unit test.
  * @param body The test function body block. 
  */
-#define test(name, body)   \
-    printf(" ▶ %s", name); \
-    body                   \
-    __mu__.tests_run++;                 
+#define test(name, body)        \
+  {                             \
+    int fails = 0;              \
+    printf(" ▶ %s\n", name);    \
+    body                        \
+    if (fails == 0) {           \
+      printf("   🗹  OK\n\n");  \
+    } else {                    \
+      printf("   ⬜ FAIL\n\n"); \
+    }                           \
+    __mu__.tests_run++;         \
+  }                
 
 /**
  * Asserts that the test condition is true or prints the 
@@ -81,13 +90,17 @@ int main()                                                                   \
  * @param __format The failing message template.
  * @param args     Optional template arguments.
  */
-#define assert(test, __format, args...)                         \
-  if (!(test)) {                                                \
-    printf(" … FAIL\n   ▸ %d: "__format"\n", __LINE__, ##args); \
-    __mu__.tests_failed++;                                      \
-  } else {                                                      \
-    printf(" … OK\n");                                          \
+#define assert(test, __format, args...)                 \
+  if (!(test)) {                                        \
+    if (fails == 0) {                                   \
+      __mu__.tests_failed++;                            \
+    }                                                   \
+    printf("    ▸ %d: "__format"\n", __LINE__, ##args); \
+    fails++;                                            \
   }
+
+#define assert_str_equal(act, exp) \
+  assert(!strcmp(exp, act), "Expected string [%s] but got [%s]", exp, act)
 
 // clang-format on
 

@@ -28,7 +28,7 @@
 
 Lexer *new_lexer(FILE *input)
 {
-  Lexer *lexer = (Lexer *)malloc(sizeof(Lexer));
+  Lexer *lexer = malloc(sizeof(Lexer));
   lexer->input = input;
   lexer->token.line = 1;
   lexer->token.col = 0;
