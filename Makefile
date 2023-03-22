@@ -19,23 +19,34 @@ CFLAGS = -std=c17 -g -Wall
 
 # Binary
 #------------------------------------------------------------------------------
-TARGET = mnml-as									# Binary target name.
+# Binary target name.
+TARGET = mnml-as
 
-SRC_DIR = ./src										# Binary source root directory.
-OUT_DIR = ./build									# Binary build root directory.
-OBJ_DIR = $(OUT_DIR)/obj					# Subdirectory for all source object files.
+# Binary source root directory.
+SRC_DIR = ./src
+# Binary build root directory.
+OUT_DIR = ./build
+# Subdirectory for all source object files.
+OBJ_DIR = $(OUT_DIR)/obj
 
-LIBS += 													# Binary source library dependencies.
-DEPS += -I$(SRC_DIR)							# Binary source header file dependencies.
+# Binary source library dependencies.
+LIBS +=
+# Binary source header file dependencies.
+DEPS += -I$(SRC_DIR)
 
 # Unit testing
 #------------------------------------------------------------------------------
-TST_SRC_DIR = ./test							# Unit tests source root directory.
-TST_OUT_DIR = ./build/tests				# Unit tests build root directory.
-TST_OBJ_DIR = $(TST_OUT_DIR)/obj	# Subdirectory for all unit test object files.
+# Unit tests source root directory.
+TST_SRC_DIR = ./test
+# Unit tests build root directory.
+TST_OUT_DIR = ./build/tests
+# Subdirectory for all unit test object files.
+TST_OBJ_DIR = $(TST_OUT_DIR)/obj
 
-TST_LIBS += 											# Unit tests library dependencies.
-TST_DEPS += -I$(TST_SRC_DIR)			# Unit tests header file dependencies.
+# Unit tests library dependencies.
+TST_LIBS +=
+# Unit tests header file dependencies.
+TST_DEPS += -I$(TST_SRC_DIR)
 
 #------------------------------------------------------------------------------
 # DO NOT EDIT BELOW THIS LINE
