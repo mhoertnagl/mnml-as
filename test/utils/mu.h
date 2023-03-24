@@ -42,7 +42,7 @@ int main()                                                                   \
     .tests_failed = 0                                                        \
   };                                                                         \
   printf("\n═══════════════════════════════════════════════════════════\n"); \
-  printf(" µ Unit v1.2\n");                                                  \
+  printf(" µ Unit v1.3\n");                                                  \
   printf("───────────────────────────────────────────────────────────\n");   \
   printf(" Running file %s\n\n", __FILE__);                                  \
   body                                                                       \
@@ -83,6 +83,21 @@ int main()                                                                   \
   }                
 
 /**
+ * Fails and prints the failing message. 
+ * 
+ * @param __format The failing message template.
+ * @param args     Optional template arguments.
+ */
+#define fail(__format, args...)                         \
+  {                                                     \
+    if (fails == 0) {                                   \
+      __mu__.tests_failed++;                            \
+    }                                                   \
+    printf("    ▸ %d: "__format"\n", __LINE__, ##args); \
+    fails++;                                            \
+  }
+
+/**
  * Asserts that the test condition is true or prints the 
  * failing message if the condition is not satisfied.
  * 
@@ -90,14 +105,8 @@ int main()                                                                   \
  * @param __format The failing message template.
  * @param args     Optional template arguments.
  */
-#define assert(test, __format, args...)                 \
-  if (!(test)) {                                        \
-    if (fails == 0) {                                   \
-      __mu__.tests_failed++;                            \
-    }                                                   \
-    printf("    ▸ %d: "__format"\n", __LINE__, ##args); \
-    fails++;                                            \
-  }
+#define assert(test, __format, args...) \
+  if (!(test)) fail(__format, ##args)
 
 /**
  * Asserts that the actual string is equal 

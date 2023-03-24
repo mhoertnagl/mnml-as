@@ -26,24 +26,26 @@
 
 #define MAX_LINE_LEN 256
 
+void next_chr(Lexer *lexer)
+{
+  lexer->chr = getc(lexer->input);
+  lexer->token.col++;
+}
+
 Lexer *new_lexer(FILE *input)
 {
   Lexer *lexer = malloc(sizeof(Lexer));
   lexer->input = input;
   lexer->token.line = 1;
   lexer->token.col = 0;
+  // Read the first character.
+  next_chr(lexer);
   return lexer;
 }
 
 void free_lexer(Lexer *lexer)
 {
   free(lexer);
-}
-
-void next_chr(Lexer *lexer)
-{
-  lexer->chr = getc(lexer->input);
-  lexer->token.col++;
 }
 
 void skip_space(Lexer *lexer)
@@ -72,8 +74,6 @@ void read_text(Lexer *lexer)
 
 i8 next_token(Lexer *lexer)
 {
-  next_chr(lexer);
-
   if (lexer->chr == EOF)
   {
     // Rewind to enable repeated
@@ -90,42 +90,43 @@ i8 next_token(Lexer *lexer)
   if (lexer->chr == '@')
   {
     lexer->token.type = TOK_LABEL;
-    read_text(lexer);
-    printf(
-        "%lu:%lu Found label: [%s]\n",
-        lexer->token.line,
-        lexer->token.col,
-        lexer->token.text);
+    // read_text(lexer);
+    // printf(
+    //     "%lu:%lu Found label: [%s]\n",
+    //     lexer->token.line,
+    //     lexer->token.col,
+    //     lexer->token.text);
   }
   else if (lexer->chr == '&')
   {
     lexer->token.type = TOK_REF;
-    read_text(lexer);
-    printf(
-        "%lu:%lu Found reference: [%s]\n",
-        lexer->token.line,
-        lexer->token.col,
-        lexer->token.text);
+    // read_text(lexer);
+    // printf(
+    //     "%lu:%lu Found reference: [%s]\n",
+    //     lexer->token.line,
+    //     lexer->token.col,
+    //     lexer->token.text);
   }
   else if (isdigit(lexer->chr))
   {
     lexer->token.type = TOK_NUM;
-    read_text(lexer);
-    printf(
-        "%lu:%lu Found number: [%s]\n",
-        lexer->token.line,
-        lexer->token.col,
-        lexer->token.text);
+    // read_text(lexer);
+    // printf(
+    //     "%lu:%lu Found number: [%s]\n",
+    //     lexer->token.line,
+    //     lexer->token.col,
+    //     lexer->token.text);
   }
   else
   {
     lexer->token.type = TOK_OP;
-    read_text(lexer);
-    printf(
-        "%lu:%lu Found keyword: [%s]\n",
-        lexer->token.line,
-        lexer->token.col,
-        lexer->token.text);
+    // read_text(lexer);
+    // printf(
+    //     "%lu:%lu Found keyword: [%s]\n",
+    //     lexer->token.line,
+    //     lexer->token.col,
+    //     lexer->token.text);
   }
+  read_text(lexer);
   return 0;
 }

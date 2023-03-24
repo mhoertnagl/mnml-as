@@ -41,7 +41,7 @@ typedef struct
 {
   // clang-format off
   FILE  *input;
-  i8    chr;
+  char  chr;
   Token token;
   // clang-format on
 } Lexer;
