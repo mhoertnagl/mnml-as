@@ -1,32 +1,6 @@
-psh
-pop
-nip
-swp
-ovr
-dup
-rot
-inc
-dec
-add
-sub
-mul
-div
-not
-and
-oor
-xor
-sll
-srl
-equ
-neq
-slt
-sgt
-sle
-sge
-jmp
-jal
-bra
-ldw
-stw
-drx
-dtx
+  psh 0x1234
+  dup
+  add
+@loop
+  psh &loop
+  jmp

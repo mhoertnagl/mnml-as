@@ -29,15 +29,17 @@
 void next_chr(Lexer *lexer)
 {
   lexer->chr = getc(lexer->input);
-  lexer->token.col++;
+  lexer->col++;
 }
 
 Lexer *new_lexer(FILE *input)
 {
   Lexer *lexer = malloc(sizeof(Lexer));
   lexer->input = input;
-  lexer->token.line = 1;
-  lexer->token.col = 0;
+  lexer->line = 1;
+  lexer->col = 0;
+  // lexer->token.line = 1;
+  // lexer->token.col = 1;
   // Read the first character.
   next_chr(lexer);
   return lexer;
@@ -54,8 +56,8 @@ void skip_space(Lexer *lexer)
   {
     if (lexer->chr == '\n')
     {
-      lexer->token.line++;
-      lexer->token.col = 0;
+      lexer->line++;
+      lexer->col = 0;
     }
     next_chr(lexer);
   }
@@ -127,6 +129,10 @@ i8 next_token(Lexer *lexer)
     //     lexer->token.col,
     //     lexer->token.text);
   }
+
+  lexer->token.line = lexer->line;
+  lexer->token.col = lexer->col;
+
   read_text(lexer);
   return 0;
 }

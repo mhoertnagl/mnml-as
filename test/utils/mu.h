@@ -42,7 +42,7 @@ int main()                                                                   \
     .tests_failed = 0                                                        \
   };                                                                         \
   printf("\n═══════════════════════════════════════════════════════════\n"); \
-  printf(" µ Unit v1.3\n");                                                  \
+  printf(" µ Unit v1.4\n");                                                  \
   printf("───────────────────────────────────────────────────────────\n");   \
   printf(" Running file %s\n\n", __FILE__);                                  \
   body                                                                       \
@@ -85,6 +85,13 @@ int main()                                                                   \
 /**
  * Fails and prints the failing message. 
  * 
+ * If you wish to exit early, it is required that you
+ * return an exit value.
+ * @code
+ * fail("File not found");
+ * return 0;
+ * @endcode
+ * 
  * @param __format The failing message template.
  * @param args     Optional template arguments.
  */
@@ -107,6 +114,22 @@ int main()                                                                   \
  */
 #define assert(test, __format, args...) \
   if (!(test)) fail(__format, ##args)
+
+/**
+ * Asserts that the actual integer is equal
+ * to the expected integer or prints a fixed
+ * message indicating the mismatch. 
+ * 
+ * @param act The actual integer.
+ * @param exp The expected integer.
+ */
+#define assert_int_equal(act, exp)        \
+  assert(                                 \
+    exp == act,                           \
+    "Expected integer [%d] but got [%d]", \
+    exp,                                  \
+    act                                   \
+  )
 
 /**
  * Asserts that the actual string is equal 
