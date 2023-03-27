@@ -69,8 +69,8 @@ Assembler *new_assembler(FILE *input, FILE *output)
 
 void free_assembler(Assembler *assembler)
 {
-  free_lexer(assembler->lexer);
   free_symbol_table(assembler->table);
+  free_lexer(assembler->lexer);
   free(assembler);
 }
 
@@ -83,6 +83,7 @@ void resolve_labels(Assembler *assembler)
   while (next_token(lexer) != EOF)
   {
     Token token = lexer->token;
+    printf("Resolve Token: %s\n", token.text);
     switch (token.type)
     {
     case TOK_OP:
@@ -112,6 +113,7 @@ void encode(Assembler *assembler)
   while (next_token(lexer) != EOF)
   {
     Token token = lexer->token;
+    printf("Encode Token: %s\n", token.text);
     switch (token.type)
     {
     case TOK_OP:
@@ -132,7 +134,7 @@ void encode(Assembler *assembler)
     }
     case TOK_REF:
     {
-      i32 loc = find_symbol(assembler->table, token.text + 1);
+      i32 loc = find_symbol(table, token.text + 1);
       // ERROR: undefined reference
       write_u16(assembler, loc);
       // ip += 2;
@@ -146,4 +148,5 @@ void assembler_run(Assembler *assembler)
 {
   resolve_labels(assembler);
   encode(assembler);
+  fflush(assembler->output);
 }

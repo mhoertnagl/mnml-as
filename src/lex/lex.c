@@ -38,9 +38,8 @@ Lexer *new_lexer(FILE *input)
   lexer->input = input;
   lexer->line = 1;
   lexer->col = 0;
-  // lexer->token.line = 1;
-  // lexer->token.col = 1;
-  // Read the first character.
+  // Read the first character. This is required
+  // to jump-start the scanning process.
   next_chr(lexer);
   return lexer;
 }
@@ -80,7 +79,9 @@ i8 next_token(Lexer *lexer)
   {
     // Rewind to enable repeated
     // scanning of the input file.
-    rewind(lexer->input);
+    // rewind(lexer->input);
+    int code = fseek(lexer->input, 0, SEEK_SET);
+    printf("rewind: %d\n", code);
     return EOF;
   }
 
@@ -89,47 +90,22 @@ i8 next_token(Lexer *lexer)
     skip_space(lexer);
   }
 
-  if (lexer->chr == '@')
+  u8 type = TOK_OP;
+
+  switch (lexer->chr)
   {
-    lexer->token.type = TOK_LABEL;
-    // read_text(lexer);
-    // printf(
-    //     "%lu:%lu Found label: [%s]\n",
-    //     lexer->token.line,
-    //     lexer->token.col,
-    //     lexer->token.text);
-  }
-  else if (lexer->chr == '&')
-  {
-    lexer->token.type = TOK_REF;
-    // read_text(lexer);
-    // printf(
-    //     "%lu:%lu Found reference: [%s]\n",
-    //     lexer->token.line,
-    //     lexer->token.col,
-    //     lexer->token.text);
-  }
-  else if (isdigit(lexer->chr))
-  {
-    lexer->token.type = TOK_NUM;
-    // read_text(lexer);
-    // printf(
-    //     "%lu:%lu Found number: [%s]\n",
-    //     lexer->token.line,
-    //     lexer->token.col,
-    //     lexer->token.text);
-  }
-  else
-  {
-    lexer->token.type = TOK_OP;
-    // read_text(lexer);
-    // printf(
-    //     "%lu:%lu Found keyword: [%s]\n",
-    //     lexer->token.line,
-    //     lexer->token.col,
-    //     lexer->token.text);
+  case '@':
+    type = TOK_LABEL;
+    break;
+  case '&':
+    type = TOK_REF;
+    break;
+  case '0' ... '9':
+    type = TOK_NUM;
+    break;
   }
 
+  lexer->token.type = type;
   lexer->token.line = lexer->line;
   lexer->token.col = lexer->col;
 
