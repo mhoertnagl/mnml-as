@@ -22,7 +22,7 @@
 #include "as.h"
 
 // clang-format off
-static const char keywords[][4] = {
+static const char keywords[][3] = {
   "psh", "pop", "nip", "swp", "ovr", "dup", "rot", "inc",
   "dec", "add", "sub", "mul", "div", "not", "and", "oor",
   "xor", "sll", "srl", "equ", "neq", "slt", "sgt", "sle",
@@ -30,13 +30,13 @@ static const char keywords[][4] = {
 };
 // clang-format on
 
-i8 get_opcode(cstr mn)
+i8 get_opcode(cstr keyword)
 {
-  for (u32 i = 0; i < sizeof(keywords); i += 4)
+  for (u32 i = 0; i < sizeof(keywords) / 3; i++)
   {
-    if (strncmp(mn, keywords[i], 4) == 0)
+    if (strncmp(keyword, keywords[i], 3) == 0)
     {
-      return i / 4;
+      return i;
     }
   }
   return -1;
@@ -83,7 +83,6 @@ void resolve_labels(Assembler *assembler)
   while (next_token(lexer) != EOF)
   {
     Token token = lexer->token;
-    printf("Resolve Token: %s\n", token.text);
     switch (token.type)
     {
     case TOK_OP:
@@ -106,14 +105,12 @@ void resolve_labels(Assembler *assembler)
 
 void encode(Assembler *assembler)
 {
-  // u32 ip = 0;
   Lexer *lexer = assembler->lexer;
   SymbolTable *table = assembler->table;
 
   while (next_token(lexer) != EOF)
   {
     Token token = lexer->token;
-    printf("Encode Token: %s\n", token.text);
     switch (token.type)
     {
     case TOK_OP:
@@ -121,7 +118,6 @@ void encode(Assembler *assembler)
       u8 op = get_opcode(token.text);
       // ERROR: illegal operation
       write_u8(assembler, op);
-      // ip++;
       break;
     }
     case TOK_NUM:
@@ -129,7 +125,6 @@ void encode(Assembler *assembler)
       i16 num = strtol(token.text, NULL, 0);
       // ERROR: number conversion error
       write_i16(assembler, num);
-      // ip += 2;
       break;
     }
     case TOK_REF:
@@ -137,7 +132,6 @@ void encode(Assembler *assembler)
       i32 loc = find_symbol(table, token.text + 1);
       // ERROR: undefined reference
       write_u16(assembler, loc);
-      // ip += 2;
       break;
     }
     }

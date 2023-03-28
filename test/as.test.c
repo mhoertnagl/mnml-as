@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "utils/mu.h"
+#include "../src/as/vm.h"
 #include "../src/as/as.h"
 
 mu_unit({
@@ -26,57 +27,39 @@ mu_unit({
 
     free_assembler(assembler);
     fclose(src_fp);
+    fflush(bin_fp);
     fclose(bin_fp);
-    // Lexer *lexer = new_lexer(fp);
 
-    // next_token(lexer);
-    // assert(lexer->token.type == TOK_OP, "token type should be [%d]", TOK_OP);
-    // assert_str_equal(lexer->token.text, "psh");
-    // assert_int_equal((int)lexer->token.line, 1);
-    // assert_int_equal((int)lexer->token.col, 3);
+    int val = 42;
+    FILE *out_fp = fopen("./test/files/02.vm", "r");
 
-    // next_token(lexer);
-    // assert(lexer->token.type == TOK_NUM, "token type should be [%d]", TOK_NUM);
-    // assert_str_equal(lexer->token.text, "0x1234");
-    // assert_int_equal((int)lexer->token.line, 1);
-    // assert_int_equal((int)lexer->token.col, 7);
+    fread(&val, 1, 1, out_fp);
+    assert_int_equal(val, VM_PSH);
 
-    // next_token(lexer);
-    // assert(lexer->token.type == TOK_OP, "token type should be [%d]", TOK_OP);
-    // assert_str_equal(lexer->token.text, "dup");
-    // assert_int_equal((int)lexer->token.line, 2);
-    // assert_int_equal((int)lexer->token.col, 3);
+    val = 42;
+    fread(&val, 2, 1, out_fp);
+    assert_int_equal(val, 0x1234);
 
-    // next_token(lexer);
-    // assert(lexer->token.type == TOK_OP, "token type should be [%d]", TOK_OP);
-    // assert_str_equal(lexer->token.text, "add");
-    // assert_int_equal((int)lexer->token.line, 3);
-    // assert_int_equal((int)lexer->token.col, 3);
+    val = 42;
+    fread(&val, 1, 1, out_fp);
+    assert_int_equal(val, VM_DUP);
 
-    // next_token(lexer);
-    // assert(lexer->token.type == TOK_LABEL, "token type should be [%d]", TOK_LABEL);
-    // assert_str_equal(lexer->token.text, "@loop");
-    // assert_int_equal((int)lexer->token.line, 4);
-    // assert_int_equal((int)lexer->token.col, 1);
+    val = 42;
+    fread(&val, 1, 1, out_fp);
+    assert_int_equal(val, VM_ADD);
 
-    // next_token(lexer);
-    // assert(lexer->token.type == TOK_OP, "token type should be [%d]", TOK_OP);
-    // assert_str_equal(lexer->token.text, "psh");
-    // assert_int_equal((int)lexer->token.line, 5);
-    // assert_int_equal((int)lexer->token.col, 3);
+    val = 42;
+    fread(&val, 1, 1, out_fp);
+    assert_int_equal(val, VM_PSH);
 
-    // next_token(lexer);
-    // assert(lexer->token.type == TOK_REF, "token type should be [%d]", TOK_REF);
-    // assert_str_equal(lexer->token.text, "&loop");
-    // assert_int_equal((int)lexer->token.line, 5);
-    // assert_int_equal((int)lexer->token.col, 7);
+    val = 42;
+    fread(&val, 2, 1, out_fp);
+    assert_int_equal(val, 0x0005);
 
-    // next_token(lexer);
-    // assert(lexer->token.type == TOK_OP, "token type should be [%d]", TOK_OP);
-    // assert_str_equal(lexer->token.text, "jmp");
-    // assert_int_equal((int)lexer->token.line, 6);
-    // assert_int_equal((int)lexer->token.col, 3);
+    val = 42;
+    fread(&val, 1, 1, out_fp);
+    assert_int_equal(val, VM_JMP);
 
-    // free_lexer(lexer);
+    fclose(out_fp);
   });
 })

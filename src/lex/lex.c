@@ -77,11 +77,12 @@ i8 next_token(Lexer *lexer)
 {
   if (lexer->chr == EOF)
   {
-    // Rewind to enable repeated
-    // scanning of the input file.
-    // rewind(lexer->input);
-    int code = fseek(lexer->input, 0, SEEK_SET);
-    printf("rewind: %d\n", code);
+    // Rewind to enable repeated scanning
+    // of the input file.
+    rewind(lexer->input);
+    // We need to read the next token, or else
+    // the current character will remain EOF.
+    next_chr(lexer);
     return EOF;
   }
 
