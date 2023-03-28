@@ -91,6 +91,8 @@ i8 next_token(Lexer *lexer)
     skip_space(lexer);
   }
 
+  // TODO: Support for comments.
+
   u8 type = TOK_OP;
 
   switch (lexer->chr)
