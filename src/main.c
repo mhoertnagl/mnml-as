@@ -45,7 +45,7 @@ int main(int argc, char **argv)
 
   if (output == NULL)
   {
-    perrorf("ERROR: Binary file [%s] not found.\n", argv[2]);
+    perrorf("ERROR: Could not access output file [%s].\n", argv[2]);
     return EXIT_FAILURE;
   }
 
