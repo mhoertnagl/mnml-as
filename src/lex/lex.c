@@ -14,8 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-// https://www.w3.org/People/Raggett/tidy/lexer.c
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -90,8 +88,6 @@ i8 next_token(Lexer *lexer)
   {
     skip_space(lexer);
   }
-
-  // TODO: Support for comments.
 
   u8 type = TOK_OP;
 

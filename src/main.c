@@ -20,8 +20,7 @@
 // #include <ctype.h>
 // #include "utils/types.h"
 #include "utils/errio.h"
-// #include "as/as.h"
-#include "lex/lex.h"
+#include "as/as.h"
 
 int main(int argc, char **argv)
 {
@@ -31,31 +30,32 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  FILE *src_fp;
-  FILE *bin_fp;
+  FILE *input;
+  FILE *output;
 
-  src_fp = fopen(argv[1], "r");
+  input = fopen(argv[1], "r");
 
-  if (src_fp == NULL)
+  if (input == NULL)
   {
     perrorf("ERROR: Source file [%s] not found.\n", argv[1]);
     return EXIT_FAILURE;
   }
 
-  bin_fp = fopen(argv[2], "wb");
+  output = fopen(argv[2], "wb");
 
-  if (bin_fp == NULL)
+  if (output == NULL)
   {
     perrorf("ERROR: Binary file [%s] not found.\n", argv[2]);
     return EXIT_FAILURE;
   }
 
-  Lexer *lexer = new_lexer(src_fp);
+  Assembler *assembler = new_assembler(input, output);
 
-  next_token(lexer);
+  assembler_run(assembler);
 
-  fclose(bin_fp);
-  fclose(src_fp);
+  free_assembler(assembler);
+  fclose(output);
+  fclose(input);
 
   return EXIT_SUCCESS;
 }
