@@ -50,8 +50,8 @@ typedef struct
 
 Lexer *new_lexer(FILE *input);
 
-void free_lexer(Lexer *lexer);
+void free_lexer(Lexer *lex);
 
-i8 next_token(Lexer *lexer);
+i8 next_token(Lexer *lex);
 
 #endif

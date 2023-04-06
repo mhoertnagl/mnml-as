@@ -24,74 +24,86 @@
 
 #define MAX_LINE_LEN 256
 
-void next_chr(Lexer *lexer)
+void next_chr(Lexer *lex)
 {
-  lexer->chr = getc(lexer->input);
-  lexer->col++;
+  lex->chr = getc(lex->input);
+  lex->col++;
+}
+
+i8 reset_lexer(Lexer *lex)
+{
+  rewind(lex->input);
+  lex->line = 1;
+  lex->col = 0;
+  // Read the first character. This is required
+  // to jump-start the scanning process.
+  next_chr(lex);
+  return EOF;
 }
 
 Lexer *new_lexer(FILE *input)
 {
-  Lexer *lexer = malloc(sizeof(Lexer));
-  lexer->input = input;
-  lexer->line = 1;
-  lexer->col = 0;
-  // Read the first character. This is required
-  // to jump-start the scanning process.
-  next_chr(lexer);
-  return lexer;
+  Lexer *lex = malloc(sizeof(Lexer));
+  lex->input = input;
+  reset_lexer(lex);
+  return lex;
 }
 
-void free_lexer(Lexer *lexer)
+void free_lexer(Lexer *lex)
 {
-  free(lexer);
+  free(lex);
 }
 
-void skip_space(Lexer *lexer)
+void skip_space(Lexer *lex)
 {
-  while (lexer->chr != EOF && isspace(lexer->chr))
+  while (lex->chr != EOF && isspace(lex->chr))
   {
-    if (lexer->chr == '\n')
+    if (lex->chr == '\n')
     {
-      lexer->line++;
-      lexer->col = 0;
+      lex->line++;
+      lex->col = 0;
     }
-    next_chr(lexer);
+    next_chr(lex);
   }
 }
 
-void read_text(Lexer *lexer)
+void skip_comment(Lexer *lex)
+{
+  if (lex->chr == '#')
+  {
+    while (lex->chr != EOF && lex->chr != '\n')
+    {
+      next_chr(lex);
+    }
+  }
+}
+
+void read_text(Lexer *lex)
 {
   u32 p = 0;
-  while (lexer->chr != EOF && !isspace(lexer->chr))
+  while (lex->chr != EOF && !isspace(lex->chr))
   {
-    lexer->token.text[p++] = lexer->chr;
-    next_chr(lexer);
+    lex->token.text[p++] = lex->chr;
+    next_chr(lex);
   }
-  lexer->token.text[p] = '\0';
+  lex->token.text[p] = '\0';
 }
 
-i8 next_token(Lexer *lexer)
+i8 next_token(Lexer *lex)
 {
-  if (lexer->chr == EOF)
+  if (lex->chr == EOF)
   {
-    // Rewind to enable repeated scanning
-    // of the input file.
-    rewind(lexer->input);
-    // We need to read the next token, or else
-    // the current character will remain EOF.
-    next_chr(lexer);
-    return EOF;
+    return reset_lexer(lex);
   }
 
-  if (isspace(lexer->chr))
+  while (isspace(lex->chr) || lex->chr == '#')
   {
-    skip_space(lexer);
+    skip_comment(lex);
+    skip_space(lex);
   }
 
   u8 type = TOK_OP;
-
-  switch (lexer->chr)
+  switch (lex->chr)
   {
   case '@':
     type = TOK_LABEL;
@@ -104,10 +116,9 @@ i8 next_token(Lexer *lexer)
     break;
   }
 
-  lexer->token.type = type;
-  lexer->token.line = lexer->line;
-  lexer->token.col = lexer->col;
-
-  read_text(lexer);
+  lex->token.type = type;
+  lex->token.line = lex->line;
+  lex->token.col = lex->col;
+  read_text(lex);
   return 0;
 }
