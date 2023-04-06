@@ -1,3 +1,4 @@
+# A rather nonsensical example.
 @label
   psh 0x1234
   psh 0x4321

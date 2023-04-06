@@ -16,9 +16,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-// #include <string.h>
-// #include <ctype.h>
-// #include "utils/types.h"
 #include "utils/errio.h"
 #include "as/as.h"
 
@@ -30,19 +27,14 @@ int main(int argc, char **argv)
     return EXIT_FAILURE;
   }
 
-  FILE *input;
-  FILE *output;
-
-  input = fopen(argv[1], "r");
-
+  FILE *input = fopen(argv[1], "r");
   if (input == NULL)
   {
     perrorf("ERROR: Source file [%s] not found.\n", argv[1]);
     return EXIT_FAILURE;
   }
 
-  output = fopen(argv[2], "wb");
-
+  FILE *output = fopen(argv[2], "wb");
   if (output == NULL)
   {
     perrorf("ERROR: Could not access output file [%s].\n", argv[2]);
@@ -50,12 +42,9 @@ int main(int argc, char **argv)
   }
 
   Assembler *assembler = new_assembler(input, output);
-
   assembler_run(assembler);
-
   free_assembler(assembler);
   fclose(output);
   fclose(input);
-
   return EXIT_SUCCESS;
 }
