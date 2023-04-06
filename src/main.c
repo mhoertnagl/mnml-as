@@ -19,25 +19,31 @@
 #include "utils/errio.h"
 #include "as/as.h"
 
+// clang-format off
+#define USAGE         "Usage: %s input.as output.vm\n"
+#define NOT_FOUND     "ERROR: Source file [%s] not found.\n"
+#define ACCESS_DENIED "ERROR: Could not access output file [%s].\n"
+// clang-format on
+
 int main(int argc, char **argv)
 {
   if (argc < 3)
   {
-    printf("Usage: %s input.as output.vm\n", argv[0]);
+    printf(USAGE, argv[0]);
     return EXIT_FAILURE;
   }
 
   FILE *input = fopen(argv[1], "r");
   if (input == NULL)
   {
-    perrorf("ERROR: Source file [%s] not found.\n", argv[1]);
+    perrorf(NOT_FOUND, argv[1]);
     return EXIT_FAILURE;
   }
 
   FILE *output = fopen(argv[2], "wb");
   if (output == NULL)
   {
-    perrorf("ERROR: Could not access output file [%s].\n", argv[2]);
+    perrorf(ACCESS_DENIED, argv[2]);
     return EXIT_FAILURE;
   }
 
