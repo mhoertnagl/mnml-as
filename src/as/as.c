@@ -42,20 +42,29 @@ i8 get_opcode(cstr keyword)
   return -1;
 }
 
+void write_i8(Assembler *assembler, i8 val)
+{
+  fwrite(&val, 1, 1, assembler->output);
+}
+
 void write_u8(Assembler *assembler, u8 val)
 {
   fwrite(&val, 1, 1, assembler->output);
 }
 
-void write_i16(Assembler *assembler, i16 val)
-{
-  fwrite(&val, 2, 1, assembler->output);
-}
+// void write_i16(Assembler *assembler, i16 val)
+// {
+//   write_i8(assembler, val >> 8);
+//   write_u8(assembler, val & 0xff);
+//   // fwrite(&val, 2, 1, assembler->output);
+// }
 
-void write_u16(Assembler *assembler, u16 val)
-{
-  fwrite(&val, 2, 1, assembler->output);
-}
+// void write_u16(Assembler *assembler, u16 val)
+// {
+//   write_u8(assembler, val >> 8);
+//   write_u8(assembler, val & 0xff);
+//   // fwrite(&val, 2, 1, assembler->output);
+// }
 
 Assembler *new_assembler(FILE *input, FILE *output)
 {
@@ -124,14 +133,18 @@ void encode(Assembler *assembler)
     {
       i16 num = strtol(token.text, NULL, 0);
       // ERROR: number conversion error
-      write_i16(assembler, num);
+      write_i8(assembler, num >> 8);
+      write_u8(assembler, num & 0xff);
+      // write_i16(assembler, num);
       break;
     }
     case TOK_REF:
     {
       i32 loc = find_symbol(table, token.text + 1);
       // ERROR: undefined reference
-      write_u16(assembler, loc);
+      write_u8(assembler, (loc >> 8) & 0xff);
+      write_u8(assembler, loc & 0xff);
+      // write_u16(assembler, loc);
       break;
     }
     }

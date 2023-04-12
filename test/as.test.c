@@ -37,8 +37,12 @@ mu_unit({
     assert_int_equal(val, VM_PSH);
 
     val = 42;
-    fread(&val, 2, 1, out_fp);
-    assert_int_equal(val, 0x1234);
+    // fread(&val, 2, 1, out_fp);
+    // assert_int_equal(val, 0x1234);
+    fread(&val, 1, 1, out_fp);
+    assert_int_equal(val, 0x12);
+    fread(&val, 1, 1, out_fp);
+    assert_int_equal(val, 0x34);
 
     val = 42;
     fread(&val, 1, 1, out_fp);
@@ -53,8 +57,12 @@ mu_unit({
     assert_int_equal(val, VM_PSH);
 
     val = 42;
-    fread(&val, 2, 1, out_fp);
-    assert_int_equal(val, 0x0005);
+    // fread(&val, 2, 1, out_fp);
+    // assert_int_equal(val, 0x0005);
+    fread(&val, 1, 1, out_fp);
+    assert_int_equal(val, 0x00);
+    fread(&val, 1, 1, out_fp);
+    assert_int_equal(val, 0x05);
 
     val = 42;
     fread(&val, 1, 1, out_fp);
