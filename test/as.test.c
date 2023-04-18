@@ -6,8 +6,8 @@
 
 mu_unit({
   test("Test assembly of files/02.as", {
-    FILE *src_fp = fopen("./test/files/02.as", "r");
-    FILE *bin_fp = fopen("./test/files/02.vm", "wb");
+    FILE *src_fp = fopen("./test/files/03.as", "r");
+    FILE *bin_fp = fopen("./test/files/03.vm", "wb");
 
     if (src_fp == NULL)
     {
