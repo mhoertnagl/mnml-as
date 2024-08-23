@@ -14,44 +14,37 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef LEX_H
-#define LEX_H
+#include "sym.h"
+#include <stdlib.h>
+#include <string.h>
 
-#include <stdio.h>
-#include "utils/types.h"
+SymbolTable table;
 
-#define MAX_TEXT_LEN 256
+// Or we statically allocate all symbols.
+void free_symbol_table(SymbolTable *table) {
+  for (u64 i = 0; i < table->size; i++) {
+    Symbol *symbol = table->symbols[i];
+    if (symbol != NULL) {
+      free(symbol);
+    }
+  }
+  free(table);
+}
 
-#define TOK_OP 0
-#define TOK_NUM 1
-#define TOK_REF 2
-#define TOK_LABEL 3
+void symbol_add(str name, u64 loc) {
+  Symbol *symbol = malloc(sizeof(Symbol));
+  symbol->name = name;
+  symbol->loc = loc;
+  table.symbols[table.size] = symbol;
+  table.size++;
+}
 
-typedef struct
-{
-  // clang-format off
-  u8   type;
-  u32  line;
-  u32  col;
-  char text[MAX_TEXT_LEN];
-  // clang-format on
-} Token;
-
-typedef struct
-{
-  // clang-format off
-  FILE  *input;
-  char  chr;
-  u32   line;
-  u32   col;
-  Token token;
-  // clang-format on
-} Lexer;
-
-Lexer *new_lexer(FILE *input);
-
-void free_lexer(Lexer *lex);
-
-i8 next_token(Lexer *lex);
-
-#endif
+u64 symbol_find(str name) {
+  for (u64 i = 0; i < table.size; i++) {
+    Symbol *symbol = table.symbols[i];
+    if (strcmp(name, symbol->name) == 0) {
+      return symbol->loc;
+    }
+  }
+  return -1;
+}

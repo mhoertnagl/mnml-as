@@ -1,4 +1,4 @@
-// types.h - Rust inspired type definitions.
+// mnml-as - Assembler for the mnml-vm virtual stack machine.
 // Copyright (C) 2023  Mathias Hörtnagl <mathias.hoertnagl[ÄT]gmail.com>
 //
 // This program is free software: you can redistribute it and/or modify
@@ -14,25 +14,25 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
-typedef signed char i8;
-typedef unsigned char u8;
+#include "lex.h"
+#include "sym.h"
+#include <stdint.h>
 
-typedef signed short i16;
-typedef unsigned short u16;
-
-typedef signed long i32;
-typedef unsigned long u32;
-
-typedef signed long long i64;
-typedef unsigned long long u64;
-
-typedef float f32;
-typedef double f64;
-
-typedef char *str;
+typedef uint8_t u8;
+typedef uint64_t u64;
 typedef const char *cstr;
 
-#endif
+#define SRC_EXT "as"
+#define BIN_EXT "vm"
+
+typedef struct {
+  SymbolTable table;
+  FILE        *output;
+  u64         ip;
+} Assembler;
+
+extern Assembler assembler;
+
+void assembler_run(FILE *input, FILE *output);

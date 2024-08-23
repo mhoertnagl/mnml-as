@@ -14,35 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef SYM_H
-#define SYM_H
+#pragma once
 
-#include "utils/types.h"
+#include <stdint.h>
 
-#define TABLE_SIZE (1 << 16)
+typedef char *str;
+typedef uint64_t u64;
 
-typedef struct
-{
-  // clang-format off
+#define TABLE_SIZE 65536
+
+typedef struct {
   str name;
-  u16 loc;
-  // clang-format on
+  u64 loc;
 } Symbol;
 
-typedef struct
-{
-  // clang-format off
-  u32    size;
+typedef struct {
+  u64 size;
   Symbol *symbols[TABLE_SIZE];
-  // clang-format on
 } SymbolTable;
 
-SymbolTable *new_symbol_table();
+extern SymbolTable table;
 
-void free_symbol_table(SymbolTable *table);
+void symbol_add(str name, u64 loc);
 
-void add_symbol(SymbolTable *table, str name, u16 loc);
-
-i32 find_symbol(SymbolTable *table, str name);
-
-#endif
+u64 symbol_find(str name);

@@ -46,7 +46,7 @@ mu_unit({
     free_symbol_table(table);
   });
 
-  test("A not added symbol should not be findable", {
+  test("A symbol not added should not be findable", {
     SymbolTable *table = new_symbol_table();
     add_symbol(table, "x", 42);
     i32 loc = find_symbol(table, "y");

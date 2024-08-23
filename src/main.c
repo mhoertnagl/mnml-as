@@ -14,42 +14,29 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
+#include "as.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "utils/errio.h"
-#include "as/as.h"
 
-// clang-format off
-#define USAGE         "Usage: %s input.as output.vm\n"
-#define NOT_FOUND     "ERROR: Source file [%s] not found.\n"
-#define ACCESS_DENIED "ERROR: Could not access output file [%s].\n"
-// clang-format on
-
-int main(int argc, char **argv)
-{
-  if (argc < 3)
-  {
-    printf(USAGE, argv[0]);
+int main(int argc, char **argv) {
+  if (argc < 3) {
+    printf("Usage: %s input.as output.vm\n", argv[0]);
     return EXIT_FAILURE;
   }
 
   FILE *input = fopen(argv[1], "r");
-  if (input == NULL)
-  {
-    perrorf(NOT_FOUND, argv[1]);
+  if (input == NULL) {
+    fprintf(stderr, "ERROR: Source file [%s] not found.\n", argv[1]);
     return EXIT_FAILURE;
   }
 
   FILE *output = fopen(argv[2], "wb");
-  if (output == NULL)
-  {
-    perrorf(ACCESS_DENIED, argv[2]);
+  if (output == NULL) {
+    fprintf(stderr, "ERROR: Could not access output file [%s].\n", argv[2]);
     return EXIT_FAILURE;
   }
 
-  Assembler *assembler = new_assembler(input, output);
-  assembler_run(assembler);
-  free_assembler(assembler);
+  assembler_run(input, output);
   fclose(output);
   fclose(input);
   return EXIT_SUCCESS;

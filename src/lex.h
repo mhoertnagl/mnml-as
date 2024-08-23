@@ -14,30 +14,39 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-#ifndef AS_H
-#define AS_H
+#pragma once
 
-#include "utils/types.h"
-#include "lex/lex.h"
-#include "sym/sym.h"
+#include <stdint.h>
+#include <stdio.h>
 
-#define SRC_EXT "as"
-#define BIN_EXT "vm"
+typedef uint8_t u8;
+typedef uint64_t u64;
 
-typedef struct
-{
-  // clang-format off
-  Lexer       *lexer;
-  SymbolTable *table;
-  FILE        *output;
-  u32         ip;
-  // clang-format on
-} Assembler;
+#define MAX_LINE_LEN 256
+#define MAX_TEXT_LEN 256
 
-Assembler *new_assembler(FILE *input, FILE *output);
+#define TOK_OP 0
+#define TOK_NUM 1
+#define TOK_REF 2
+#define TOK_LABEL 3
 
-void free_assembler(Assembler *assembler);
+typedef struct {
+  u8 type;
+  u64 line;
+  u64 col;
+  char text[MAX_TEXT_LEN];
+} Token;
 
-void assembler_run(Assembler *assembler);
+typedef struct {
+  FILE *input;
+  char chr;
+  u64 line;
+  u64 col;
+} Lexer;
 
-#endif
+extern Token token;
+extern Lexer lexer;
+
+void lexer_reset();
+
+int lexer_next_token();

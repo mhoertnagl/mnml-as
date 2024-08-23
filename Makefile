@@ -20,7 +20,7 @@ CFLAGS = -std=c17 -g -Wall
 # Binary
 #------------------------------------------------------------------------------
 # Binary target name.
-TARGET = mnml-as
+TARGET = mnmlas
 
 # Binary source root directory.
 SRC_DIR = ./src
